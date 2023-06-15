@@ -1,91 +1,69 @@
-import { useEffect, useState } from 'react'
-import { Card, CardContent, Typography, Avatar, Button, TextField } from '@mui/material'
+import { useEffect, useState } from "react"
+import { Card, CardContent, TextField, Typography, Button, Avatar } from "@mui/material"
 import axios from 'axios'
-
-type baseDados = {
-  avatar: string,
-  email: string,
+type BaseUser = {
   first_name: string,
-  id: number,
-  last_name: string,
+  avatar: string,
+  email: string
 }
-
 function App() {
-  const [dados, setDados] = useState<baseDados[]>([]);
-  const [valueInput, setValueInput] = useState<any>(-1);
-  const [number, setNumber] = useState<any>(-1);
-
+  const [dadosApi, setDadosApi] = useState<BaseUser[]>([])
+  const [valueInput, setValueInput] = useState<any>(-1)
+  const [user, setUser] = useState<any>(-1)
   useEffect(() => {
-    getDados()
+    getDados();
   }, [])
 
-  const submit = () => {
-    setNumber(valueInput)
-  }
   const getDados = async () => {
     try {
       const { data } = await axios.get('https://reqres.in/api/users')
-      setDados(data.data)
+      setDadosApi(data.data)
     } catch (error) {
       console.log(error)
     }
   }
+  const submit = () => setUser(valueInput)
 
   return (
     <>
       <Card sx={{
-        display: 'flex', justifyContent: 'space-around',
-        alignItems: 'center', height: '380px',
-        padding: '20px'
+        height: '400px',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center'
       }}>
-
-        <Card sx={{ height: '70%', width: '300px' }}>
-
-          <CardContent sx={{
-            display: 'flex', flexDirection: 'column',
-            gap: '20px', height: '100%'
-          }}>
-
-            <Typography variant='h6'>Digite um número</Typography>
-
-            <TextField
-              id="outlined-basic"
-              onChange={(e) => setValueInput(e.target.value)}
-              label="número"
-              variant="outlined" />
-
-            <Button variant="contained" onClick={submit}> Buscar </Button>
-
-          </CardContent>
-
-        </Card>
-
-        <Card sx={{ height: '70%', width: '300px' }}>
-
+        <Card sx={{
+          heigth: '70%', width: '350px'
+        }}>
           <CardContent sx={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'space-around',
             alignItems: 'center',
             flexDirection: 'column'
           }}>
-
-            <Avatar
-              src={dados[number]?.avatar || 'nao encontrado ainda'}
-              sx={{ width: 56, height: 56 }}
-            />
-
-            <Typography gutterBottom variant="h5" component="div">
-              {dados[number]?.first_name || 'nao encontrado ainda'}
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              {dados[number]?.email || 'nao encontrado ainda'}
-            </Typography>
-
+            <Typography variant='h6'> Digite um valor</Typography>
+            <TextField variant='outlined' onChange={(event) => setValueInput(event.target.value)} />
+            <Button variant='contained' onClick={submit} >Enviar</Button>
           </CardContent>
         </Card>
 
+        <Card sx={{
+          heigth: '70%', width: '350px'
+        }}>
+          <CardContent sx={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            flexDirection: 'column'
+          }}>
+            <Avatar src={dadosApi[user]?.avatar} sx={{ width: '50px', height: '50px' }} />
+            <Typography variant='h6'>{dadosApi[user]?.email || 'Não encontrado'}</Typography>
+            <Typography variant='body2'>{dadosApi[user]?.first_name || 'Não encontrado'}</Typography>
+
+          </CardContent>
+        </Card>
       </Card>
+
     </>
   )
 }
